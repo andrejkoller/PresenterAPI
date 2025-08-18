@@ -9,14 +9,14 @@ namespace PresenterAPI.Models
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
-        public string? PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; } = null;
         public string PasswordHash { get; set; } = string.Empty;
-        public string? PasswordSalt { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime? LastLogin { get; set; }
-        public DateTime? LastPasswordChange { get; set; }
+        public DateTime? LastLogin { get; set; } = null;
+        public DateTime? LastPasswordChange { get; set; } = null;
         public bool IsEmailVerified { get; set; } = false;
         public bool IsActive { get; set; } = true;
+        public string Theme { get; set; } = "light";
     }
 }
