@@ -41,5 +41,41 @@ namespace PresenterAPI.Controllers
                 });
             }
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginUserAsync([FromBody] LoginRequest request)
+        {
+            if (request == null)
+            {
+                return BadRequest("Request cannot be null.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var user = await userService.LoginUserAsync(request);
+                if (user == null)
+                {
+                    return Unauthorized("Invalid email or password.");
+                }
+                return Ok(user);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    ex.Message,
+                    Details = ex.InnerException?.Message
+                });
+            }
+        }
     }
 }
