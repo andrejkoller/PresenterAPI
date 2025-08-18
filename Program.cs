@@ -1,8 +1,10 @@
 
 using dotenv.net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace PresenterAPI
 {
@@ -11,6 +13,25 @@ namespace PresenterAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var allowedOrigins = builder.Configuration
+                .GetSection("AllowedOrigins")
+                .Get<string[]>() ?? [];
+
+            if (allowedOrigins.Length == 0)
+            {
+                throw new InvalidOperationException("AllowedOrigins configuration is not set or empty.");
+            }
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowConfiguredOrigins", policy =>
+                {
+                    policy.WithOrigins(allowedOrigins)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
+                });
+            });
 
             DotEnv.Load();
 
@@ -34,8 +55,15 @@ namespace PresenterAPI
                     };
                 });
 
+            builder.Services.AddDbContext<PresenterDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")
+            ));
             builder.Services.AddAuthorization();
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                });
             builder.Services.AddOpenApi();
 
             var app = builder.Build();
@@ -45,6 +73,7 @@ namespace PresenterAPI
                 app.MapOpenApi();
             }
 
+            app.UseCors("AllowConfiguredOrigins");
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
