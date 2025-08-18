@@ -3,6 +3,7 @@ using dotenv.net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using PresenterAPI.Middlewares;
 using PresenterAPI.Services;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -66,6 +67,7 @@ namespace PresenterAPI
                     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
             builder.Services.AddOpenApi();
+            builder.Services.AddScoped<AuthService>();
             builder.Services.AddScoped<UserService>();
 
             var app = builder.Build();
@@ -76,6 +78,7 @@ namespace PresenterAPI
             }
 
             app.UseCors("AllowConfiguredOrigins");
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
