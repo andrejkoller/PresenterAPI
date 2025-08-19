@@ -34,7 +34,7 @@ namespace PresenterAPI.Services
             return UserMapper.MapToPublicUser(user);
         }
 
-        public async Task<LoginResponse> LoginUserAsync(LoginRequest request)
+        public async Task<AuthResponse> LoginUserAsync(LoginRequest request)
         {
             var user = await dbContext.Users
                 .FirstOrDefaultAsync(u => u.Email == request.Email);
@@ -52,7 +52,7 @@ namespace PresenterAPI.Services
 
             string jwtToken = GenerateJwtToken(user);
 
-            return new LoginResponse
+            return new AuthResponse
             {
                 User = UserMapper.MapToPublicUser(user),
                 Token = jwtToken

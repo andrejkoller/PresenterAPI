@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PresenterAPI.DTOs;
 using PresenterAPI.Services;
 
 namespace PresenterAPI.Controllers
