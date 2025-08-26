@@ -2,24 +2,19 @@
 using PresenterAPI.Interfaces;
 using PresenterAPI.Models;
 
-namespace PresenterAPI
+namespace PresenterAPI.Data
 {
     public class PresenterDbContext(DbContextOptions<PresenterDbContext> options) : DbContext(options)
     {
-        public DbSet<User> Users { get; set; }
+        public DbSet<Presentation> Presentations { get; set; }
+        public DbSet<Slide> Slides { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<User>()
-                .ToTable("Users");
 
             modelBuilder.Entity<Presentation>()
-                .ToTable("Presentations")
-                .HasOne(p => p.Owner)
-                .WithMany(u => u.Presentations)
-                .HasForeignKey(p => p.OwnerId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .ToTable("Presentations");
 
             modelBuilder.Entity<Slide>()
                 .ToTable("Slides")
@@ -47,6 +42,5 @@ namespace PresenterAPI
 
             return base.SaveChanges();
         }
-
     }
 }

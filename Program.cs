@@ -1,8 +1,8 @@
-
 using dotenv.net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using PresenterAPI.Data;
 using PresenterAPI.Middlewares;
 using PresenterAPI.Services;
 using System.Text;
@@ -67,8 +67,7 @@ namespace PresenterAPI
                     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
             builder.Services.AddOpenApi();
-            builder.Services.AddScoped<AuthService>();
-            builder.Services.AddScoped<UserService>();
+            builder.Services.AddScoped<PresentationService>();
 
             var app = builder.Build();
 
